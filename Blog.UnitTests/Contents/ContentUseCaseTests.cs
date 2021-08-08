@@ -12,22 +12,27 @@ namespace Blog.UnitTests.Contents
 {
     public class ContentUseCaseTests
     {
+        private readonly Mock<IGetContentListRepository> getContentListRepositoryMock;
+        private readonly ContentUseCase sut;
+
+        public ContentUseCaseTests()
+        {
+            this.getContentListRepositoryMock = new Mock<IGetContentListRepository>(MockBehavior.Default);
+            this.sut = new ContentUseCase(this.getContentListRepositoryMock.Object);
+        }
+
         [Fact]
         public async Task ShouldReturnListOfContentsWhen()
         {
             //Given
             IEnumerable<Content> actual = new List<Content>();
-            var getContentListRepositoryMock = new Mock<IGetContentListRepository>(MockBehavior.Default);
-            var sut = new ContentUseCase(getContentListRepositoryMock.Object);
 
             //When
-            //mock.Setup(foo => foo.DoSomethingAsync()).Returns(async () => 42);
-            getContentListRepositoryMock.Setup(method => method.GetContentList()).ReturnsAsync(() => actual);
-            var expected = await sut.GetContentList();
+            this.getContentListRepositoryMock.Setup(method => method.GetContentList()).ReturnsAsync(() => actual);
+            var expected = await this.sut.GetContentList();
 
             //Then
             Assert.Equal(expected, actual);
-
         }
     }
 }
