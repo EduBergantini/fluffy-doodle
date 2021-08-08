@@ -24,7 +24,7 @@ namespace Blog.UnitTests.Contents
         }
 
         [Fact]
-        public async Task ShouldReturnListOfContentsWhen()
+        public async Task ShouldReturnListOfContentsOnSuccess()
         {
             //Given
             IEnumerable<Content> actual = new List<Content>();
