@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 using Xunit;
@@ -7,6 +8,7 @@ using Blog.Application.Contents.Protocols;
 using Blog.Application.Contents.UseCases;
 using System.Collections.Generic;
 using Blog.Domain.Contents.Entities;
+
 
 namespace Blog.UnitTests.Contents
 {
@@ -33,6 +35,19 @@ namespace Blog.UnitTests.Contents
 
             //Then
             Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ShouldThrowWhenGetContentListRepositoryThrows()
+        {
+            //Given
+            var exception = new Exception();
+            
+            //When
+            this.getContentListRepositoryMock.Setup(method => method.GetContentList()).ThrowsAsync(exception);
+            
+            //Then
+            Assert.ThrowsAsync<Exception>(() => this.sut.GetContentList());
         }
     }
 }
