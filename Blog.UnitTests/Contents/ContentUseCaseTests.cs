@@ -8,7 +8,7 @@ using Blog.Application.Contents.Protocols;
 using Blog.Application.Contents.UseCases;
 using System.Collections.Generic;
 using Blog.Domain.Contents.Entities;
-
+using Blog.UnitTests.Contents.Fakes;
 
 namespace Blog.UnitTests.Contents
 {
@@ -27,7 +27,7 @@ namespace Blog.UnitTests.Contents
         public async Task ShouldReturnListOfContentsOnSuccess()
         {
             //Given
-            IEnumerable<Content> actual = new List<Content>();
+            IEnumerable<Content> actual = ContentFake.GetContentList();
 
             //When
             this.getContentListRepositoryMock.Setup(method => method.GetContentList()).ReturnsAsync(() => actual);

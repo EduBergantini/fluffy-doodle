@@ -12,12 +12,15 @@ using Blog.Domain.Contents.Entities;
 using Blog.Infrastructure.SqlServer.Contexts;
 using Blog.Infrastructure.SqlServer.Contents;
 using Microsoft.EntityFrameworkCore;
+using Blog.UnitTests.Contents.Fakes;
 
 namespace Blog.UnitTests.Contents
 {
     public class ContentRepositoryTests
     {
         private readonly Mock<ContentDataContext> dataContextMock;
+        private readonly IEnumerable<Content> contents;
+        private readonly ContentRepository sut;
 
         public ContentRepositoryTests()
         {
@@ -25,22 +28,23 @@ namespace Blog.UnitTests.Contents
                     .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                     .Options;
             this.dataContextMock = new Mock<ContentDataContext>(MockBehavior.Default, new[] { inMemoryOptions });
+
+            this.contents = ContentFake.GetContentList();
+            this.sut = new ContentRepository(this.dataContextMock.Object);
         }
 
         [Fact]
         public async Task ShouldReturnListOfContentOnSuccess()
         {
             //Given
-            var contents = new List<Content>();
-            var mock = contents.AsQueryable().BuildMockDbSet();
-            var sut = new ContentRepository(this.dataContextMock.Object);
+            var mock = this.contents.AsQueryable().BuildMockDbSet();
 
             //When
             this.dataContextMock.SetupGet(property => property.Contents).Returns(mock.Object);
             var expected = await sut.GetContentList();
 
             //Then
-            Assert.Equal(expected, contents);
+            Assert.Equal(expected, this.contents);
         }
     }
 }
