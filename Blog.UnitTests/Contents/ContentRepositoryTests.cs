@@ -46,5 +46,18 @@ namespace Blog.UnitTests.Contents
             //Then
             Assert.Equal(expected, this.contents);
         }
+
+        [Fact]
+        public async Task ShouldThrowWhenDataContextThrows()
+        {
+            //Given
+            var exception = new Exception();
+
+            //When
+            this.dataContextMock.SetupGet(property => property.Contents).Throws(exception);
+
+            //Then
+            await Assert.ThrowsAsync<Exception>(() => sut.GetContentList());
+        }
     }
 }
