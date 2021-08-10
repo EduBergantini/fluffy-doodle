@@ -1,7 +1,11 @@
-﻿using Blog.Domain.Contents.UseCases;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Mvc;
+
+using Blog.Domain.Contents.UseCases;
 
 namespace Blog.Server.Api.Controllers
 {
@@ -19,9 +23,16 @@ namespace Blog.Server.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var contents = await this.getContentListUseCase.GetContentList();
-            if (!contents?.Any() ?? true) return NoContent();
-            return Ok(contents);
+            try
+            {
+                var contents = await this.getContentListUseCase.GetContentList();
+                if (!contents?.Any() ?? true) return NoContent();
+                return Ok(contents);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, exception);
+            }
 
         }
     }
