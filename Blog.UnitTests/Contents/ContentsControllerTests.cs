@@ -4,6 +4,7 @@ using Blog.Server.Api.Controllers;
 using Blog.UnitTests.Contents.Fakes;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -53,7 +54,23 @@ namespace Blog.UnitTests.Contents
             var noContentResult = Assert.IsType<NoContentResult>(httpResponse);
             Assert.Equal(204, noContentResult.StatusCode);
         }
-        
-        
+
+        [Fact]
+        public async Task ShouldReturnInternalServerErrorWhenIGetContentListUseCaseThrows()
+        {
+            //Given
+            var expected = new Exception();
+
+            //When
+            this.mockedGetContentuseCase.Setup(method => method.GetContentList()).ThrowsAsync(expected);
+            var httpResponse = await this.sut.Get();
+
+            //Then
+            var statusCodeResult = Assert.IsType<ObjectResult>(httpResponse);
+            Assert.Equal(500, statusCodeResult.StatusCode);
+
+            var model = Assert.IsAssignableFrom<Exception>(statusCodeResult.Value);
+            Assert.Equal(expected, model);
+        }
     }
 }
