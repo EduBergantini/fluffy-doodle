@@ -1,5 +1,6 @@
 ﻿using Blog.Domain.Contents.UseCases;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Blog.Server.Api.Controllers
@@ -19,6 +20,7 @@ namespace Blog.Server.Api.Controllers
         public async Task<IActionResult> Get()
         {
             var contents = await this.getContentListUseCase.GetContentList();
+            if (!contents?.Any() ?? true) return NoContent();
             return Ok(contents);
 
         }
