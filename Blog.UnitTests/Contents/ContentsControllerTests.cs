@@ -38,5 +38,22 @@ namespace Blog.UnitTests.Contents
             var model = Assert.IsAssignableFrom<IEnumerable<Content>>(okResult.Value);
             Assert.Equal(expected, model);
         }
+
+        [Fact]
+        public async Task ShouldReturnNoContentWhenGetReturnsSuccessWithNoData()
+        {
+            //Given
+            IEnumerable<Content> expected = null;
+
+            //When
+            this.mockedGetContentuseCase.Setup(method => method.GetContentList()).ReturnsAsync(() => expected);
+            var httpResponse = await this.sut.Get();
+
+            //Then
+            var noContentResult = Assert.IsType<NoContentResult>(httpResponse);
+            Assert.Equal(204, noContentResult.StatusCode);
+        }
+        
+        
     }
 }
