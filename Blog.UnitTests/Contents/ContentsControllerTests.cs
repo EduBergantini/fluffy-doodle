@@ -1,13 +1,15 @@
-﻿using Blog.Domain.Contents.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+
+using Moq;
+using Xunit;
+
+using Blog.Domain.Contents.Entities;
 using Blog.Domain.Contents.UseCases;
 using Blog.Server.Api.Controllers;
 using Blog.UnitTests.Contents.Fakes;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Blog.UnitTests.Contents
 {

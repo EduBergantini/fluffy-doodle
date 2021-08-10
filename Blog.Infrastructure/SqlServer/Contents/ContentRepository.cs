@@ -1,9 +1,11 @@
-﻿using Blog.Application.Contents.Protocols;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
+
+using Blog.Application.Contents.Protocols;
 using Blog.Domain.Contents.Entities;
 using Blog.Infrastructure.SqlServer.Contexts;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Blog.Infrastructure.SqlServer.Contents
 {

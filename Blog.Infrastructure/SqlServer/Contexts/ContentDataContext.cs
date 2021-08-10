@@ -1,8 +1,8 @@
-﻿
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
 using Blog.Domain.Contents.Entities;
 using Blog.Infrastructure.SqlServer.Contents.Configurations;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Blog.Infrastructure.SqlServer.Contexts
 {

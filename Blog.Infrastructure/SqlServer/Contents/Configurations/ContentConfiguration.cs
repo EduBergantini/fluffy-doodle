@@ -1,6 +1,7 @@
-using Blog.Domain.Contents.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+using Blog.Domain.Contents.Entities;
 
 namespace Blog.Infrastructure.SqlServer.Contents.Configurations
 {
