@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Blog.Server.Api.DependenciesContainer;
 using Blog.Infrastructure.SqlServer.Contexts;
+using Blog.Server.Api.Services;
 
 namespace Blog.Server.Api
 {
@@ -23,9 +24,9 @@ namespace Blog.Server.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ContentDataContext>((options, context) =>
+            services.AddDbContext<ContentDataContext>((options) =>
             {
-                context.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
             services.AddContentDependencies();
@@ -45,6 +46,7 @@ namespace Blog.Server.Api
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blog.Server.Api v1"));
+                app.InitializeDatabaseMigration();
             }
 
             app.UseHttpsRedirection();
