@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  blog.server.api:
+    container_name: blog.server.api
+    image: ${DOCKER_REGISTRY-}blogserverapi
+    build:
+      context: .
+      dockerfile: Blog.Server.Api/Dockerfile
+    depends_on:
+      - "mssqlserver"
+
+  mssqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-CU12-ubuntu-20.04
+    container_name: contents.database.sql.server
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "C0nT3nt@159!"
+      MSSQL_PID: Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./data/sqlserver:/var/opt/mssql/data
