@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F4738E3A-7DE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E52FB600-A9DF-4718-B51D-3C9291F6F0FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.IntegrationTests", "..\Blog.IntegrationTests\Blog.IntegrationTests.csproj", "{35FB98AE-CC81-4ECD-AE71-763A811D60DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.IntegrationTests", "Blog.IntegrationTests\Blog.IntegrationTests.csproj", "{35FB98AE-CC81-4ECD-AE71-763A811D60DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
