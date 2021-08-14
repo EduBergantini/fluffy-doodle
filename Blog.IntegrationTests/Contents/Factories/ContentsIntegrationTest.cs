@@ -7,7 +7,7 @@ using Blog.IntegrationTests.Common;
 using Blog.Domain.Contents.UseCases;
 using Blog.IntegrationTests.Contents.Stubs;
 
-namespace Blog.IntegrationTests.Contents
+namespace Blog.IntegrationTests.Contents.Factories
 {
     public class ContentsIntegrationTest : ApiWebApplicationFactory
     {

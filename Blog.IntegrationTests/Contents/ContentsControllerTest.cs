@@ -8,7 +8,7 @@ using Xunit;
 
 using Blog.IntegrationTests.Common;
 using Blog.Domain.Contents.Entities;
-
+using Blog.IntegrationTests.Contents.Factories;
 
 namespace Blog.IntegrationTests.Contents
 {
