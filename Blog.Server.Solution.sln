@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Infrastructure", "Blog
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C26C0407-8004-4130-B957-DA2E0AF11DDD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F4738E3A-7DEB-4B76-8FEA-40862974BC8A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{E52FB600-A9DF-4718-B51D-3C9291F6F0FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +104,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{73556F7E-7570-4B22-84B3-0A326154F8EF} = {F4738E3A-7DEB-4B76-8FEA-40862974BC8A}
+		{578D9922-69D2-4EDA-9011-E62D6266A65D} = {F4738E3A-7DEB-4B76-8FEA-40862974BC8A}
+		{BAA491B0-3FEF-46A7-BF0B-4886E9E29AE5} = {F4738E3A-7DEB-4B76-8FEA-40862974BC8A}
+		{858C08C5-E617-4C4A-A5DC-EC304A8CB36C} = {F4738E3A-7DEB-4B76-8FEA-40862974BC8A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FFAF5A8C-DAC4-47E2-81BE-EF4539B049F4}
