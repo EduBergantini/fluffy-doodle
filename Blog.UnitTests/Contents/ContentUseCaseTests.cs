@@ -112,5 +112,22 @@ namespace Blog.UnitTests.Contents
             //Then
             await  Assert.ThrowsAsync<Exception>(() => this.sut.GetContent("any_value"));
         }
+
+        [Fact]
+        public async Task ShouldReturnNullWhenGetContentRepositoryReturnsNull()
+        {
+            //Given
+            Content actual = null;
+
+            //When
+            this.getContentRepositoryMock
+                .Setup(method => method.GetContent(It.IsAny<Expression<Func<Content, bool>>>()))
+                .ReturnsAsync(() => actual);
+
+            var expected = await this.sut.GetContent("any_value");
+
+            //Then
+            Assert.Equal(expected, actual);
+        }
     }
 }
