@@ -15,12 +15,17 @@ namespace Blog.UnitTests.Contents
     public class ContentUseCaseTests
     {
         private readonly Mock<IGetContentListRepository> getContentListRepositoryMock;
+        private readonly Mock<IGetContentRepository> getContentRepositoryMock;
         private readonly ContentUseCase sut;
 
         public ContentUseCaseTests()
         {
             this.getContentListRepositoryMock = new Mock<IGetContentListRepository>(MockBehavior.Default);
-            this.sut = new ContentUseCase(this.getContentListRepositoryMock.Object);
+            this.getContentRepositoryMock = new Mock<IGetContentRepository>(MockBehavior.Default);
+            this.sut = new ContentUseCase(
+                this.getContentListRepositoryMock.Object,
+                this.getContentRepositoryMock.Object
+            );
         }
 
         [Fact]
@@ -48,6 +53,23 @@ namespace Blog.UnitTests.Contents
             
             //Then
             Assert.ThrowsAsync<Exception>(() => this.sut.GetContentList());
+        }
+
+        [Fact]
+        public async Task ShouldReturnAContentOnSuccess()
+        {
+            //Given
+            Content actual = ContentFake.GetContent();
+
+            //When
+            this.getContentRepositoryMock
+                .Setup(method => method.GetContent(It.IsAny<Func<Content, bool>>()))
+                .ReturnsAsync(() => actual);
+
+            var expected = await this.sut.GetContent(actual.PublicId);
+
+            //Then
+            Assert.Equal(expected, actual);
         }
     }
 }

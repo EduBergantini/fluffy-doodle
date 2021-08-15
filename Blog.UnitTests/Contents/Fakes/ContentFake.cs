@@ -22,6 +22,7 @@ namespace Blog.UnitTests.Contents.Fakes
             return new Content
             {
                 Id = this.faker.Random.Int(min: 0),
+                PublicId = this.faker.Lorem.Sentence().Replace(" ", "-").ToLower(),
                 FeaturedImage = this.faker.Internet.Avatar(),
                 Title = this.faker.Lorem.Sentence(),
                 Subtitle = this.faker.Lorem.Paragraph()
@@ -39,6 +40,13 @@ namespace Blog.UnitTests.Contents.Fakes
             }
 
             return contents;
+        }
+
+        public static Content GetContent()
+        {
+            var contentFake = new ContentFake();
+            return contentFake.GetFakeContent();
+
         }
     }
 }
