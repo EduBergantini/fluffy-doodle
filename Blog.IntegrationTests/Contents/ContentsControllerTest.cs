@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -13,7 +14,6 @@ using Blog.Domain.Contents.Entities;
 using Blog.IntegrationTests.Contents.Factories;
 using Blog.Domain.Contents.UseCases;
 using Blog.IntegrationTests.Contents.Stubs;
-
 
 namespace Blog.IntegrationTests.Contents
 {
@@ -50,6 +50,21 @@ namespace Blog.IntegrationTests.Contents
 
             var response = await client.GetAsync(this.url);
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GET_ShouldReturnServerErrorWhenExceptionHappens()
+        {
+            var client = base.factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddScoped<IGetContentListUseCase, ExceptionContentListUseCaseStub>();
+                });
+            }).CreateClient();
+
+            var response = await client.GetAsync(this.url);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
     }
