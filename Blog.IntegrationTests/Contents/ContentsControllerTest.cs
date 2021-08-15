@@ -5,10 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Xunit;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 
 using Blog.IntegrationTests.Common;
 using Blog.Domain.Contents.Entities;
 using Blog.IntegrationTests.Contents.Factories;
+using Blog.Domain.Contents.UseCases;
+using Blog.IntegrationTests.Contents.Stubs;
+
 
 namespace Blog.IntegrationTests.Contents
 {
@@ -30,7 +35,21 @@ namespace Blog.IntegrationTests.Contents
             var body = await response.Content.ReadAsStringAsync();
             var contents = JsonSerializer.Deserialize<IEnumerable<Content>>(body);
             Assert.Equal(3, contents.Count());
+        }
 
+        [Fact]
+        public async Task GET_ShouldReturnNoContentWhenListIsEmpty()
+        {
+            var client = base.factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddScoped<IGetContentListUseCase, EmptyContentListUseCaseStub>();
+                });
+            }).CreateClient();
+
+            var response = await client.GetAsync(this.url);
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
     }
