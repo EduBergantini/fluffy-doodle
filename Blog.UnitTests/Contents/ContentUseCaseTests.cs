@@ -32,7 +32,7 @@ namespace Blog.UnitTests.Contents
         }
 
         [Fact]
-        public async Task ShouldReturnListOfContentsOnSuccess()
+        public async Task ShouldReturnListOfContentsWhenContentListRepositorySucceeds()
         {
             //Given
             IEnumerable<Content> actual = ContentFake.GetContentList();
@@ -59,7 +59,7 @@ namespace Blog.UnitTests.Contents
         }
 
         [Fact]
-        public async Task ShouldReturnAContentOnSuccess()
+        public async Task ShouldReturnAContentWhenGetContentRepositorySucceeds()
         {
             //Given
             Content actual = ContentFake.GetContent();

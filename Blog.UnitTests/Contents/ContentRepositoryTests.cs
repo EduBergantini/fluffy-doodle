@@ -34,7 +34,7 @@ namespace Blog.UnitTests.Contents
         }
 
         [Fact]
-        public async Task ShouldReturnListOfContentOnSuccess()
+        public async Task ShouldReturnListOfContentWhenGetContentListSucceeds()
         {
             //Given
             var mock = this.contents.AsQueryable().BuildMockDbSet();
@@ -48,7 +48,7 @@ namespace Blog.UnitTests.Contents
         }
 
         [Fact]
-        public async Task ShouldThrowWhenDataContextThrows()
+        public async Task ShouldThrowWhenGetContentListThrows()
         {
             //Given
             var exception = new Exception();
