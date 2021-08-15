@@ -12,8 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Blog.IntegrationTests.Common;
 using Blog.Domain.Contents.Entities;
 using Blog.IntegrationTests.Contents.Factories;
-using Blog.Domain.Contents.UseCases;
 using Blog.IntegrationTests.Contents.Stubs;
+using Blog.Domain.Contents.UseCases.Contents;
 
 namespace Blog.IntegrationTests.Contents
 {

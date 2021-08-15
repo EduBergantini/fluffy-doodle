@@ -7,9 +7,9 @@ using Moq;
 using Xunit;
 
 using Blog.Domain.Contents.Entities;
-using Blog.Domain.Contents.UseCases;
 using Blog.Server.Api.Controllers;
 using Blog.UnitTests.Contents.Fakes;
+using Blog.Domain.Contents.UseCases.Contents;
 
 namespace Blog.UnitTests.Contents
 {

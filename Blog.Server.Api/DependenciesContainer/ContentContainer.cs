@@ -2,8 +2,8 @@
 
 using Blog.Application.Contents.Protocols;
 using Blog.Application.Contents.UseCases;
-using Blog.Domain.Contents.UseCases;
 using Blog.Infrastructure.SqlServer.Contents;
+using Blog.Domain.Contents.UseCases.Contents;
 
 namespace Blog.Server.Api.DependenciesContainer
 {

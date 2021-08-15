@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Blog.Domain.Contents.Entities;
 
 
-namespace Blog.Domain.Contents.UseCases
+namespace Blog.Domain.Contents.UseCases.Contents
 {
     public interface IGetContentListUseCase
     {

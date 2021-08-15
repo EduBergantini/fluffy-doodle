@@ -4,8 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
-
-using Blog.Domain.Contents.UseCases;
+using Blog.Domain.Contents.UseCases.Contents;
 
 namespace Blog.Server.Api.Controllers
 {

@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 
 using Blog.IntegrationTests.Common;
-using Blog.Domain.Contents.UseCases;
 using Blog.IntegrationTests.Contents.Stubs;
+using Blog.Domain.Contents.UseCases.Contents;
 
 namespace Blog.IntegrationTests.Contents.Factories
 {

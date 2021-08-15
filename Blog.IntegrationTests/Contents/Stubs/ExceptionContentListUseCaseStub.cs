@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Blog.Domain.Contents.Entities;
-using Blog.Domain.Contents.UseCases;
-
+using Blog.Domain.Contents.UseCases.Contents;
 
 namespace Blog.IntegrationTests.Contents.Stubs
 {
