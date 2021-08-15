@@ -97,5 +97,20 @@ namespace Blog.UnitTests.Contents
                 .Verify(c => c.GetContent(It.Is<Expression<Func<Content, bool>>>
                 (criteria => Lambda.Eq(criteria, expected))), Times.Once);
         }
+
+        [Fact]
+        public async Task ShouldThrowWhenGetContentRepositoryThrows()
+        {
+            //Given
+            var actual = new Exception("Unit Test Throws");
+
+            //When
+            this.getContentRepositoryMock
+                .Setup(method => method.GetContent(It.IsAny<Expression<Func<Content, bool>>>()))
+                .ThrowsAsync(actual);
+
+            //Then
+            await  Assert.ThrowsAsync<Exception>(() => this.sut.GetContent("any_value"));
+        }
     }
 }
