@@ -16,12 +16,17 @@ namespace Blog.UnitTests.Contents
     public class ContentsControllerTests
     {
         private readonly Mock<IGetContentListUseCase> mockedGetContentuseCase;
+        private readonly Mock<IGetContentByPublicIdUseCase> mockedGetContentByPublicIdUseCase;
         private readonly ContentsController sut;
 
         public ContentsControllerTests()
         {
             this.mockedGetContentuseCase = new Mock<IGetContentListUseCase>(MockBehavior.Strict);
-            this.sut = new ContentsController(this.mockedGetContentuseCase.Object);
+            this.mockedGetContentByPublicIdUseCase = new Mock<IGetContentByPublicIdUseCase>(MockBehavior.Strict);
+            this.sut = new ContentsController(
+                this.mockedGetContentuseCase.Object,
+                this.mockedGetContentByPublicIdUseCase.Object
+            );
         }
 
         [Fact]
@@ -72,6 +77,27 @@ namespace Blog.UnitTests.Contents
             Assert.Equal(500, statusCodeResult.StatusCode);
 
             var model = Assert.IsAssignableFrom<Exception>(statusCodeResult.Value);
+            Assert.Equal(expected, model);
+        }
+
+        [Fact]
+        public async Task ShouldReturnSContentWhenGetWithPublicIdParameterReturnsSuccess()
+        {
+            //Given
+            var expected = ContentFake.GetContent();
+
+            //When
+            this.mockedGetContentByPublicIdUseCase
+                .Setup(method => method.GetContent(It.IsAny<string>()))
+                .ReturnsAsync(() => expected);
+
+            var httpResponse = await this.sut.Get(expected.PublicId);
+
+            //Then
+            var okResult = Assert.IsType<OkObjectResult>(httpResponse);
+            Assert.Equal(200, okResult.StatusCode);
+
+            var model = Assert.IsAssignableFrom<Content>(okResult.Value);
             Assert.Equal(expected, model);
         }
     }
