@@ -13,10 +13,15 @@ namespace Blog.Server.Api.Controllers
     public class ContentsController : ControllerBase
     {
         private readonly IGetContentListUseCase getContentListUseCase;
+        private readonly IGetContentByPublicIdUseCase getContentByPublicIdUseCase;
 
-        public ContentsController(IGetContentListUseCase getContentListUseCase)
+        public ContentsController(
+            IGetContentListUseCase getContentListUseCase,
+            IGetContentByPublicIdUseCase getContentByPublicIdUseCase
+        )
         {
             this.getContentListUseCase = getContentListUseCase;
+            this.getContentByPublicIdUseCase = getContentByPublicIdUseCase;
         }
 
         [HttpGet]
@@ -33,6 +38,13 @@ namespace Blog.Server.Api.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, exception);
             }
 
+        }
+
+        [HttpGet("{publicId}")]
+        public async Task<IActionResult> Get(string publicId)
+        {
+            var content = await this.getContentByPublicIdUseCase.GetContent(publicId);
+            return Ok(content);
         }
     }
 }

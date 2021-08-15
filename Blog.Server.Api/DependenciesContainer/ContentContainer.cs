@@ -14,6 +14,9 @@ namespace Blog.Server.Api.DependenciesContainer
             services.AddScoped<IGetContentListUseCase, ContentUseCase>();
             services.AddScoped<IGetContentListRepository, ContentRepository>();
 
+            services.AddScoped<IGetContentByPublicIdUseCase, ContentUseCase>();
+            services.AddScoped<IGetContentRepository, ContentRepository>();
+
             return services;
         }
     }
