@@ -1,14 +1,17 @@
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using Xunit;
 using Moq;
+using Neleus.LambdaCompare;
+
 
 using Blog.Application.Contents.Protocols;
 using Blog.Application.Contents.UseCases;
-using System.Collections.Generic;
 using Blog.Domain.Contents.Entities;
 using Blog.UnitTests.Contents.Fakes;
+using System.Linq.Expressions;
 
 namespace Blog.UnitTests.Contents
 {
@@ -63,13 +66,36 @@ namespace Blog.UnitTests.Contents
 
             //When
             this.getContentRepositoryMock
-                .Setup(method => method.GetContent(It.IsAny<Func<Content, bool>>()))
+                .Setup(method => method.GetContent(It.IsAny<Expression<Func<Content, bool>>>()))
                 .ReturnsAsync(() => actual);
 
             var expected = await this.sut.GetContent(actual.PublicId);
 
             //Then
             Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public async Task ShouldCallGetContentRepositoryWithCorrectPublicId()
+        {
+            //Given
+            Content content = ContentFake.GetContent();
+            Expression<Func<Content, bool>> actual = null;
+            Expression<Func<Content, bool>> expected = x => x.PublicId == content.PublicId;
+
+            //When
+            this.getContentRepositoryMock
+                .Setup(method => method.GetContent(It.IsAny<Expression<Func<Content, bool>>>()))
+                .Callback<Expression<Func<Content, bool>>>((getContent) => actual = getContent)
+                .ReturnsAsync(() => content);
+
+            var result = await this.sut.GetContent(content.PublicId);
+
+            //Then
+            Assert.NotNull(actual);
+            this.getContentRepositoryMock
+                .Verify(c => c.GetContent(It.Is<Expression<Func<Content, bool>>>
+                (criteria => Lambda.Eq(criteria, expected))), Times.Once);
         }
     }
 }

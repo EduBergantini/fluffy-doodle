@@ -9,7 +9,7 @@ namespace Blog.UnitTests.Contents.Fakes
 {
     public class ContentFake
     {
-        private Faker faker;
+        private readonly Faker faker;
 
         private ContentFake()
         {
