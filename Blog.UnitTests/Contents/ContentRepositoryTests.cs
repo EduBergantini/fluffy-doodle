@@ -59,5 +59,20 @@ namespace Blog.UnitTests.Contents
             //Then
             await Assert.ThrowsAsync<Exception>(() => sut.GetContentList());
         }
+
+        [Fact]
+        public async Task ShouldReturnContentWhenGetContentReturns()
+        {
+            //Given
+            var mock = this.contents.AsQueryable().BuildMockDbSet();
+            var content = this.contents.Last();
+
+            //When
+            this.dataContextMock.SetupGet(property => property.Contents).Returns(mock.Object);
+            var expected = await sut.GetContent(x => x.PublicId == content.PublicId);
+
+            //Then
+            Assert.Equal(expected, content);
+        }
     }
 }
