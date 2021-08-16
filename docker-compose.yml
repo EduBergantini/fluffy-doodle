@@ -13,6 +13,8 @@ services:
   mssqlserver:
     image: mcr.microsoft.com/mssql/server:2019-CU12-ubuntu-20.04
     container_name: contents.database.sql.server
+    hostname: mssqlserver
+    user: root
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "C0nT3nt@159!"
