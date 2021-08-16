@@ -67,5 +67,19 @@ namespace Blog.IntegrationTests.Contents
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
+        [Fact]
+        public async Task GETBYPUBLICID_ShouldReturnContentsOnSuccess()
+        {
+            var publicId = "any-value";
+            var response = await base.httpClient.GetAsync($"{this.url}/{publicId}");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var body = await response.Content.ReadAsStringAsync();
+            //var content = JsonSerializer.Deserialize<Content>(body);
+            var content = JsonSerializer.Deserialize<Content>(body, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+
+            Assert.NotNull(content);
+            Assert.Equal(publicId, content.PublicId);
+        }
     }
 }

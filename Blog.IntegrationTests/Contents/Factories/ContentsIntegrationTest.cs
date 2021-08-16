@@ -16,6 +16,7 @@ namespace Blog.IntegrationTests.Contents.Factories
             builder.ConfigureTestServices(services =>
             {
                 services.AddScoped<IGetContentListUseCase, ContentListUseCaseStub>();
+                services.AddScoped<IGetContentByPublicIdUseCase, ContentByPublicIdUseCaseStub>();
             });
             base.ConfigureWebHost(builder);
         }
