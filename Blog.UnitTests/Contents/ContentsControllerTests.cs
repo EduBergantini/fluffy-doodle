@@ -100,5 +100,23 @@ namespace Blog.UnitTests.Contents
             var model = Assert.IsAssignableFrom<Content>(okResult.Value);
             Assert.Equal(expected, model);
         }
+
+        [Fact]
+        public async Task ShouldReturnNotFoundWhenGetWithPublicIdParameterReturnsNull()
+        {
+            //Given
+            Content expected = null;
+
+            //When
+            this.mockedGetContentByPublicIdUseCase
+                .Setup(method => method.GetContent(It.IsAny<string>()))
+                .ReturnsAsync(() => expected);
+
+            var httpResponse = await this.sut.Get("any_value");
+
+            //Then
+            var httpResult = Assert.IsType<NotFoundResult>(httpResponse);
+            Assert.Equal(404, httpResult.StatusCode);
+        }
     }
 }
