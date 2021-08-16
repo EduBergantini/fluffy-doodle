@@ -43,8 +43,16 @@ namespace Blog.Server.Api.Controllers
         [HttpGet("{publicId}")]
         public async Task<IActionResult> Get(string publicId)
         {
-            var content = await this.getContentByPublicIdUseCase.GetContent(publicId);
-            return Ok(content);
+            try
+            {
+                var content = await this.getContentByPublicIdUseCase.GetContent(publicId);
+                if (content == null) return NotFound();
+                return Ok(content);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, exception);
+            }
         }
     }
 }
