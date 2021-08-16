@@ -95,5 +95,20 @@ namespace Blog.IntegrationTests.Contents
             var response = await client.GetAsync($"{this.url}/any-value");
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        [Fact]
+        public async Task GETBYPUBLICID_ShouldReturnServerErrorWhenExceptionHappens()
+        {
+            var client = base.factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddScoped<IGetContentByPublicIdUseCase, ExceptionContentByPublicIdUseCaseStub>();
+                });
+            }).CreateClient();
+
+            var response = await client.GetAsync($"{this.url}/any-value");
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        }
     }
 }
