@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -80,6 +79,21 @@ namespace Blog.IntegrationTests.Contents
 
             Assert.NotNull(content);
             Assert.Equal(publicId, content.PublicId);
+        }
+
+        [Fact]
+        public async Task GETBYPUBLICID_ShouldReturnNotFoundWhenNoContentIsNull()
+        {
+            var client = base.factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddScoped<IGetContentByPublicIdUseCase, NullContentByPublicIdUseCaseStub>();
+                });
+            }).CreateClient();
+
+            var response = await client.GetAsync($"{this.url}/any-value");
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 }
