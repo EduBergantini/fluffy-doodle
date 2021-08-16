@@ -118,5 +118,28 @@ namespace Blog.UnitTests.Contents
             var httpResult = Assert.IsType<NotFoundResult>(httpResponse);
             Assert.Equal(404, httpResult.StatusCode);
         }
+
+
+        [Fact]
+        public async Task ShouldReturnInternalServerErrorWhenGetWithPublicIdParameterThrows()
+        {
+            //Given
+            var expected = new Exception("Unit Test Exeption");
+
+            //When
+            this.mockedGetContentByPublicIdUseCase
+                .Setup(method => method.GetContent(It.IsAny<string>()))
+                .ThrowsAsync(expected);
+
+            var httpResponse = await this.sut.Get("any_value");
+
+            //Then
+            var statusCodeResult = Assert.IsType<ObjectResult>(httpResponse);
+            Assert.Equal(500, statusCodeResult.StatusCode);
+
+            var model = Assert.IsAssignableFrom<Exception>(statusCodeResult.Value);
+            Assert.Equal(expected, model);
+        }
+
     }
 }
