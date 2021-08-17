@@ -10,7 +10,9 @@ namespace Blog.Server.Api.Services
         public static void InitializeDatabaseMigration(this IApplicationBuilder app)
         {
             using var serviceScope = app.ApplicationServices.CreateScope();
-            serviceScope.ServiceProvider.GetService<ContentDataContext>().Database.Migrate();
+            using var context = serviceScope.ServiceProvider.GetService<ContentDataContext>();
+            context.Database.Migrate();
+            context.Database.EnsureCreated();
         }
     }
 }
