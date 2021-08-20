@@ -23,4 +23,10 @@
     <ProjectReference Include="..\Blog.Server.Api\Blog.Server.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.Integration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
