@@ -62,6 +62,18 @@ namespace Blog.UnitTests.Users
 
             await  Assert.ThrowsAsync<Exception>(() => this.sut.Authenticate("any_email", "any_password"));
         }
+        
+        [Fact]
+        public async Task ShouldThrowUserNotFoundWhenGetUserByEmailRepositoryReturnsNull()
+        {
+            User empty = null;
+
+            this.mockedGetByEmailRepository
+                .Setup(method => method.GetByEmail(It.IsAny<string>()))
+                .ReturnsAsync(empty);
+
+            await Assert.ThrowsAsync<UserNotFoundException>(() => this.sut.Authenticate("any_email", "any_password"));
+        }
 
     }
 }
