@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Xunit;
 using Moq;
@@ -7,6 +8,7 @@ using Blog.Application.Users.UseCases;
 
 using Blog.Application.Users.Protocols;
 using Blog.Domain.Users.Entities;
+
 
 namespace Blog.UnitTests.Users
 {
@@ -50,5 +52,15 @@ namespace Blog.UnitTests.Users
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public async Task ShouldThrowWhenGetUserByEmailRepositoryThrows()
+        {
+            var actual = new Exception();
+            this.mockedGetByEmailRepository
+                .Setup(method => method.GetByEmail(It.IsAny<string>()))
+                .ThrowsAsync(actual);
+
+            await  Assert.ThrowsAsync<Exception>(() => this.sut.Authenticate("any_email", "any_password"));
+        }
     }
 }
