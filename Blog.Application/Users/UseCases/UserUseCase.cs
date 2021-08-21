@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using Blog.Application.Users.Protocols;
 using Blog.Domain.Users.Entities;
+using Blog.Domain.Users.Errors;
 using Blog.Domain.Users.UseCases;
 
 namespace Blog.Application.Users.UseCases
@@ -16,10 +17,11 @@ namespace Blog.Application.Users.UseCases
             this.getUserByEmailRepository = getUserByEmailRepository;
         }
 
-        public Task<User> Authenticate(string email, string password)
+        public async Task<User> Authenticate(string email, string password)
         {
-            var userTask = this.getUserByEmailRepository.GetByEmail(email);
-            return userTask;
+            var user = await this.getUserByEmailRepository.GetByEmail(email);
+            if (user == null) throw new UserNotFoundException();
+            return user;
         }
     }
 }
