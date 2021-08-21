@@ -18,8 +18,8 @@ namespace Blog.Application.Users.UseCases
 
         public Task<User> Authenticate(string email, string password)
         {
-            this.getUserByEmailRepository.GetByEmail(email);
-            return Task.FromResult((User)null);
+            var userTask = this.getUserByEmailRepository.GetByEmail(email);
+            return userTask;
         }
     }
 }
