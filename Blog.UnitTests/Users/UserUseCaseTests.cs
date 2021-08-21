@@ -37,6 +37,18 @@ namespace Blog.UnitTests.Users
             Assert.Equal(emailParameter, actual);
         }
 
+        [Fact]
+        public async Task ShouldReturnUserWhenGetUserByEmailRepositoryReturnsUser()
+        {
+            var actual = new User();
+            this.mockedGetByEmailRepository
+                .Setup(method => method.GetByEmail(It.IsAny<string>()))
+                .ReturnsAsync(actual);
+
+            var expected = await this.sut.Authenticate("any_email", "any_password");
+
+            Assert.Equal(expected, actual);
+        }
 
     }
 }
