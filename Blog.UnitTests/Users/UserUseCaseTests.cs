@@ -5,10 +5,10 @@ using Xunit;
 using Moq;
 
 using Blog.Application.Users.UseCases;
-
 using Blog.Application.Users.Protocols;
+using Blog.Domain.Users.Errors;
 using Blog.Domain.Users.Entities;
-
+using Blog.UnitTests.Users.Fakes;
 
 namespace Blog.UnitTests.Users
 {
@@ -32,7 +32,7 @@ namespace Blog.UnitTests.Users
 
             this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>()))
                 .Callback<string>((email) => emailParameter = email)
-                .ReturnsAsync(new User());
+                .ReturnsAsync(UserFake.GetUser());
 
             var user = await this.sut.Authenticate(actual, "any_password");
 
@@ -42,7 +42,7 @@ namespace Blog.UnitTests.Users
         [Fact]
         public async Task ShouldReturnUserWhenGetUserByEmailRepositoryReturnsUser()
         {
-            var actual = new User();
+            var actual = UserFake.GetUser();
             this.mockedGetByEmailRepository
                 .Setup(method => method.GetByEmail(It.IsAny<string>()))
                 .ReturnsAsync(actual);
@@ -62,5 +62,6 @@ namespace Blog.UnitTests.Users
 
             await  Assert.ThrowsAsync<Exception>(() => this.sut.Authenticate("any_email", "any_password"));
         }
+
     }
 }
