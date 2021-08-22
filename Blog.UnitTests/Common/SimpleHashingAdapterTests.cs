@@ -25,7 +25,7 @@ namespace Blog.UnitTests.Common
         }
 
         [Fact]
-        public async Task ShouldReturnValidHashedPasswordWhenreateSucceeds()
+        public async Task ShouldReturnValidHashedPasswordWhenCreateHashSucceeds()
         {
             var expected = await this.sut.CreateHash("any_password", 1);
             Assert.Equal(expected, this.hashedPassword);
@@ -51,14 +51,14 @@ namespace Blog.UnitTests.Common
         }
 
         [Fact]
-        public async Task ShouldThrowWhenCreateThrows()
+        public async Task ShouldThrowWhenComputeThrows()
         {
             this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
             await Assert.ThrowsAsync<Exception>(() => this.sut.CreateHash("any_password", 1));
         }
 
         [Fact]
-        public async Task ShouldReturnTrueWhenVerifySucceeds()
+        public async Task ShouldReturnTrueWhenCompareHashSucceeds()
         {
             var expected = await this.sut.CompareHash("any_password", "encrypted_password");
             Assert.True(expected);
