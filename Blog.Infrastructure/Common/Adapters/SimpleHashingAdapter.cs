@@ -7,7 +7,7 @@ using Blog.Application.Common.Protocols;
 
 namespace Blog.Infrastructure.Common.Adapters
 {
-    public class SimpleHashingAdapter : IApplicationHasher
+    public class SimpleHashingAdapter : ICreateHash
     {
         private readonly ISimpleHash simpleHash;
 
@@ -16,7 +16,7 @@ namespace Blog.Infrastructure.Common.Adapters
             this.simpleHash = simpleHash;
         }
 
-        public Task<string> Hash(string value)
+        public Task<string> CreateHash(string value)
         {
             var hashedPassword = this.simpleHash.Compute(value);
             return Task.FromResult(hashedPassword);

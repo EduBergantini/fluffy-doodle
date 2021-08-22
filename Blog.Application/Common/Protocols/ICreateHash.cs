@@ -2,8 +2,8 @@
 
 namespace Blog.Application.Common.Protocols
 {
-    public interface IApplicationHasher
+    public interface ICreateHash
     {
-        Task<string> Hash(string value);
+        Task<string> CreateHash(string value);
     }
 }

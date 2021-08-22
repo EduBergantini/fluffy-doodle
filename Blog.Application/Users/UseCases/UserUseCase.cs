@@ -10,11 +10,11 @@ namespace Blog.Application.Users.UseCases
     public class UserUseCase : IAuthenticateUseCase
     {
         private readonly IGetUserByEmailRepository getUserByEmailRepository;
-        private readonly IApplicationHasher encrypter;
+        private readonly ICreateHash encrypter;
 
         public UserUseCase(
             IGetUserByEmailRepository getUserByEmailRepository,
-            IApplicationHasher encrypter
+            ICreateHash encrypter
         )
         {
             this.getUserByEmailRepository = getUserByEmailRepository;
@@ -25,7 +25,7 @@ namespace Blog.Application.Users.UseCases
         {
             var user = await this.getUserByEmailRepository.GetByEmail(email);
             if (user == null) throw new UserNotFoundException();
-            var encryptedPassword = await this.encrypter.Hash(password);
+            var encryptedPassword = await this.encrypter.CreateHash(password);
             if (encryptedPassword != user.Password) throw new InvalidPasswordException();
             return user;
         }
