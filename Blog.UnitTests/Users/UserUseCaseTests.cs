@@ -100,5 +100,12 @@ namespace Blog.UnitTests.Users
 
             Assert.Equal(passwordParameter, actual);
         }
+
+        [Fact]
+        public async Task ShouldThrowWhenIEncrypterThrows()
+        {
+            this.mockedEncrypter.Setup(method => method.Encrypt(It.IsAny<string>())).ThrowsAsync(new Exception());
+            await Assert.ThrowsAsync<Exception>(() => this.sut.Authenticate("any_email", "any_password"));
+        }
     }
 }
