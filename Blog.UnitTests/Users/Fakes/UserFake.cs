@@ -27,10 +27,12 @@ namespace Blog.UnitTests.Users.Fakes
             };
         } 
 
-        public static User GetUser()
+        public static User GetUser(string password)
         {
             var fakeUser = new UserFake();
-            return fakeUser.GetFakeUser();
+            var user = fakeUser.GetFakeUser();
+            user.Password = password;
+            return user;
         }
     }
 }
