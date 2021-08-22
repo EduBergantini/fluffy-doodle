@@ -32,6 +32,25 @@ namespace Blog.UnitTests.Common
         }
 
         [Fact]
+        public async Task ShouldCallComputeWithCorrectParameters()
+        {
+            string plainTextParameter = string.Empty;
+            int iterationsParameter = -1;
+            this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>(), It.IsAny<int>()))
+                .Callback<string, int>((plainValue, iterations) => 
+                {
+                    plainTextParameter = plainValue;
+                    iterationsParameter = iterations;
+                })
+                .Returns(this.hashedPassword);
+
+            await this.sut.CreateHash("any_value", 10);
+
+            Assert.Equal("any_value", plainTextParameter);
+            Assert.Equal(10, iterationsParameter);
+        }
+
+        [Fact]
         public async Task ShouldThrowWhenCreateThrows()
         {
             this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
@@ -43,6 +62,13 @@ namespace Blog.UnitTests.Common
         {
             var expected = await this.sut.CompareHash("any_password", "encrypted_password");
             Assert.True(expected);
+        }
+
+        [Fact]
+        public async Task ShouldThrowWhenVerifyThrows()
+        {
+            this.mockedSimpleHash.Setup(method => method.Verify(It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
+            await Assert.ThrowsAsync<Exception>(() => this.sut.CompareHash("any_password", "encrypted_password"));
         }
 
     }
