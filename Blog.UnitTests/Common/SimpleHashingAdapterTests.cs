@@ -65,6 +65,26 @@ namespace Blog.UnitTests.Common
         }
 
         [Fact]
+        public async Task ShouldCallVerifyWithCorrectParameters()
+        {
+            string plainTextParameter = string.Empty;
+            string hashedParameter = string.Empty;
+
+            this.mockedSimpleHash.Setup(method => method.Verify(It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<string, string>((plainValue, hashedValue) =>
+                {
+                    plainTextParameter = plainValue;
+                    hashedParameter = hashedValue;
+                })
+                .Returns(true);
+
+            await this.sut.CompareHash("any_value", "hashed_value");
+
+            Assert.Equal("any_value", plainTextParameter);
+            Assert.Equal("hashed_value", hashedParameter);
+        }
+
+        [Fact]
         public async Task ShouldThrowWhenVerifyThrows()
         {
             this.mockedSimpleHash.Setup(method => method.Verify(It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
