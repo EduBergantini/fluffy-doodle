@@ -17,7 +17,7 @@ namespace Blog.UnitTests.Users
     {
         private readonly string fakeHashedPassword;
         private readonly Mock<IGetUserByEmailRepository> mockedGetByEmailRepository;
-        private readonly Mock<ICreateHash> mockedHasher;
+        private readonly Mock<ICompareHash> mockedCompareHasher;
         private readonly UserUseCase sut;
 
         public UserUseCaseTests()
@@ -26,10 +26,10 @@ namespace Blog.UnitTests.Users
             this.mockedGetByEmailRepository = new Mock<IGetUserByEmailRepository>(MockBehavior.Default);
             this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ReturnsAsync(UserFake.GetUser(this.fakeHashedPassword));
 
-            this.mockedHasher = new Mock<ICreateHash>(MockBehavior.Default);
-            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(this.fakeHashedPassword);
+            this.mockedCompareHasher = new Mock<ICompareHash>(MockBehavior.Default);
+            this.mockedCompareHasher.Setup(method => method.CompareHash(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
 
-            this.sut = new UserUseCase(this.mockedGetByEmailRepository.Object, this.mockedHasher.Object);
+            this.sut = new UserUseCase(this.mockedGetByEmailRepository.Object, this.mockedCompareHasher.Object);
         }
 
         [Fact]
@@ -74,40 +74,38 @@ namespace Blog.UnitTests.Users
         }
 
         [Fact]
-        public async Task ShouldCallHasherWithCorrectValues()
+        public async Task ShouldCallCompareHasherWithCorrectValues()
         {
 
             var actual = "any_password";
-            var email = "any_mail";
             string passwordParameter = null;
-            int iterationsParameter = -1;
+            string hashedPasswordParameter = null;
 
-            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>(), It.IsAny<int>()))
-                .Callback<string, int>((password, iterations) =>
+            this.mockedCompareHasher.Setup(method => method.CompareHash(It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<string, string>((password, hashedPassword) =>
                 {
                     passwordParameter = password;
-                    iterationsParameter = iterations;
+                    hashedPasswordParameter = hashedPassword;
                 })
-                .ReturnsAsync("encrypted_password");
+                .ReturnsAsync(true);
 
-            var user = await this.sut.Authenticate(email, actual);
+            var user = await this.sut.Authenticate("any_mail", actual);
 
             Assert.Equal(passwordParameter, actual);
-            Assert.Equal(iterationsParameter, email.Length);
+            Assert.Equal(hashedPasswordParameter, this.fakeHashedPassword);
         }
 
         [Fact]
-        public async Task ShouldThrowWhenHasherThrows()
+        public async Task ShouldThrowWhenCompareHasherThrows()
         {
-            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+            this.mockedCompareHasher.Setup(method => method.CompareHash(It.IsAny<string>(), It.IsAny<string>())).ThrowsAsync(new Exception());
             await Assert.ThrowsAsync<Exception>(() => this.sut.Authenticate("any_email", "any_password"));
         }
 
         [Fact]
-        public async Task ShouldThrowInvalidPasswordWhenPasswordIsInvalid()
+        public async Task ShouldThrowInvalidPasswordWhenCompareHashReturnsFalse()
         {
-            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync("encrypted_password");
-            this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ReturnsAsync(UserFake.GetUser("another_encrypted_password"));
+            this.mockedCompareHasher.Setup(method => method.CompareHash(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(false);
             await Assert.ThrowsAsync<InvalidPasswordException>(() => this.sut.Authenticate("any_email", "any_password"));
         }
     }
