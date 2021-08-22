@@ -4,6 +4,6 @@ namespace Blog.Application.Common.Protocols
 {
     public interface ICreateHash
     {
-        Task<string> CreateHash(string value);
+        Task<string> CreateHash(string value, int iterations);
     }
 }

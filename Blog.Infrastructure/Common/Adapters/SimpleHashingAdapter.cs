@@ -16,9 +16,9 @@ namespace Blog.Infrastructure.Common.Adapters
             this.simpleHash = simpleHash;
         }
 
-        public Task<string> CreateHash(string value)
+        public Task<string> CreateHash(string value, int interations)
         {
-            var hashedPassword = this.simpleHash.Compute(value);
+            var hashedPassword = this.simpleHash.Compute(value, interations);
             return Task.FromResult(hashedPassword);
         }
     }

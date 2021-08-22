@@ -27,7 +27,7 @@ namespace Blog.UnitTests.Users
             this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ReturnsAsync(UserFake.GetUser(this.fakeHashedPassword));
 
             this.mockedHasher = new Mock<ICreateHash>(MockBehavior.Default);
-            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>())).ReturnsAsync(this.fakeHashedPassword);
+            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(this.fakeHashedPassword);
 
             this.sut = new UserUseCase(this.mockedGetByEmailRepository.Object, this.mockedHasher.Object);
         }
@@ -78,28 +78,35 @@ namespace Blog.UnitTests.Users
         {
 
             var actual = "any_password";
+            var email = "any_mail";
             string passwordParameter = null;
+            int iterationsParameter = -1;
 
-            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>()))
-                .Callback<string>((password) => passwordParameter = password)
+            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>(), It.IsAny<int>()))
+                .Callback<string, int>((password, iterations) =>
+                {
+                    passwordParameter = password;
+                    iterationsParameter = iterations;
+                })
                 .ReturnsAsync("encrypted_password");
 
-            var user = await this.sut.Authenticate("any_mail", actual);
+            var user = await this.sut.Authenticate(email, actual);
 
             Assert.Equal(passwordParameter, actual);
+            Assert.Equal(iterationsParameter, email.Length);
         }
 
         [Fact]
         public async Task ShouldThrowWhenHasherThrows()
         {
-            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>())).ThrowsAsync(new Exception());
+            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>(), It.IsAny<int>())).ThrowsAsync(new Exception());
             await Assert.ThrowsAsync<Exception>(() => this.sut.Authenticate("any_email", "any_password"));
         }
 
         [Fact]
         public async Task ShouldThrowInvalidPasswordWhenPasswordIsInvalid()
         {
-            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>())).ReturnsAsync("encrypted_password");
+            this.mockedHasher.Setup(method => method.CreateHash(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync("encrypted_password");
             this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ReturnsAsync(UserFake.GetUser("another_encrypted_password"));
             await Assert.ThrowsAsync<InvalidPasswordException>(() => this.sut.Authenticate("any_email", "any_password"));
         }

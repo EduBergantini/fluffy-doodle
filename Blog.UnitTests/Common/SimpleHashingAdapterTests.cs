@@ -20,21 +20,21 @@ namespace Blog.UnitTests.Common
             this.mockedSimpleHash = new Mock<ISimpleHash>(MockBehavior.Default);
             this.sut = new SimpleHashingAdapter(mockedSimpleHash.Object);
             this.hashedPassword = "hashed_password";
-            this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>())).Returns(this.hashedPassword);
+            this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>(), It.IsAny<int>())).Returns(this.hashedPassword);
         }
 
         [Fact]
         public async Task ShouldReturnValidHashedPassword()
         {
-            var expected = await this.sut.CreateHash("any_password");
+            var expected = await this.sut.CreateHash("any_password", 1);
             Assert.Equal(expected, this.hashedPassword);
         }
 
         [Fact]
         public async Task ShouldThrowWhenSimpleHashingAdapterThrows()
         {
-            this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>())).Throws(new Exception());
-            await Assert.ThrowsAsync<Exception>(() => this.sut.CreateHash("any_password"));
+            this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
+            await Assert.ThrowsAsync<Exception>(() => this.sut.CreateHash("any_password", 1));
         }
     }
 }
