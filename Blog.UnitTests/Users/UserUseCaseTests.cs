@@ -21,14 +21,10 @@ namespace Blog.UnitTests.Users
         public UserUseCaseTests()
         {
             this.mockedGetByEmailRepository = new Mock<IGetUserByEmailRepository>(MockBehavior.Default);
-            this.mockedGetByEmailRepository
-                .Setup(method => method.GetByEmail(It.IsAny<string>()))
-                .ReturnsAsync(UserFake.GetUser());
+            this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ReturnsAsync(UserFake.GetUser());
 
             this.mockedEncrypter = new Mock<IEncrypter>(MockBehavior.Default);
-            this.mockedEncrypter
-                .Setup(method => method.Encrypt(It.IsAny<string>()))
-                .ReturnsAsync("encrypted_password");
+            this.mockedEncrypter.Setup(method => method.Encrypt(It.IsAny<string>())).ReturnsAsync("encrypted_password");
 
             this.sut = new UserUseCase(this.mockedGetByEmailRepository.Object, this.mockedEncrypter.Object);
         }
@@ -53,12 +49,8 @@ namespace Blog.UnitTests.Users
         public async Task ShouldReturnUserWhenGetUserByEmailRepositoryReturnsUser()
         {
             var actual = UserFake.GetUser();
-            this.mockedGetByEmailRepository
-                .Setup(method => method.GetByEmail(It.IsAny<string>()))
-                .ReturnsAsync(actual);
-
+            this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ReturnsAsync(actual);
             var expected = await this.sut.Authenticate("any_email", "any_password");
-
             Assert.Equal(expected, actual);
         }
 
@@ -66,10 +58,7 @@ namespace Blog.UnitTests.Users
         public async Task ShouldThrowWhenGetUserByEmailRepositoryThrows()
         {
             var actual = new Exception();
-            this.mockedGetByEmailRepository
-                .Setup(method => method.GetByEmail(It.IsAny<string>()))
-                .ThrowsAsync(actual);
-
+            this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ThrowsAsync(actual);
             await  Assert.ThrowsAsync<Exception>(() => this.sut.Authenticate("any_email", "any_password"));
         }
         
@@ -77,11 +66,7 @@ namespace Blog.UnitTests.Users
         public async Task ShouldThrowUserNotFoundWhenGetUserByEmailRepositoryReturnsNull()
         {
             User empty = null;
-
-            this.mockedGetByEmailRepository
-                .Setup(method => method.GetByEmail(It.IsAny<string>()))
-                .ReturnsAsync(empty);
-
+            this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ReturnsAsync(empty);
             await Assert.ThrowsAsync<UserNotFoundException>(() => this.sut.Authenticate("any_email", "any_password"));
         }
 
