@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-
+using Blog.Application.Common.Protocols;
 using Blog.Application.Users.Protocols;
 using Blog.Domain.Users.Entities;
 using Blog.Domain.Users.Errors;
@@ -10,11 +10,11 @@ namespace Blog.Application.Users.UseCases
     public class UserUseCase : IAuthenticateUseCase
     {
         private readonly IGetUserByEmailRepository getUserByEmailRepository;
-        private readonly IEncrypter encrypter;
+        private readonly IApplicationHasher encrypter;
 
         public UserUseCase(
             IGetUserByEmailRepository getUserByEmailRepository,
-            IEncrypter encrypter
+            IApplicationHasher encrypter
         )
         {
             this.getUserByEmailRepository = getUserByEmailRepository;
@@ -25,7 +25,7 @@ namespace Blog.Application.Users.UseCases
         {
             var user = await this.getUserByEmailRepository.GetByEmail(email);
             if (user == null) throw new UserNotFoundException();
-            var encryptedPassword = await this.encrypter.Encrypt(password);
+            var encryptedPassword = await this.encrypter.Hash(password);
             if (encryptedPassword != user.Password) throw new InvalidPasswordException();
             return user;
         }
