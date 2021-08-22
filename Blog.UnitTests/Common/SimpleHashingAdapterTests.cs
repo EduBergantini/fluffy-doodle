@@ -1,28 +1,40 @@
-﻿using Blog.Infrastructure.Common.Adapters;
+﻿using System;
+using System.Threading.Tasks;
+
 using Moq;
 using SimpleHashing.Net;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
+
+using Blog.Infrastructure.Common.Adapters;
 
 namespace Blog.UnitTests.Common
 {
     public class SimpleHashingAdapterTests
     {
+        private readonly Mock<ISimpleHash> mockedSimpleHash;
+        private readonly SimpleHashingAdapter sut;
+        private readonly string hashedPassword;
+
+        public SimpleHashingAdapterTests()
+        {
+            this.mockedSimpleHash = new Mock<ISimpleHash>(MockBehavior.Default);
+            this.sut = new SimpleHashingAdapter(mockedSimpleHash.Object);
+            this.hashedPassword = "hashed_password";
+            this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>())).Returns(this.hashedPassword);
+        }
+
         [Fact]
         public async Task ShouldReturnValidHashedPassword()
         {
-            var mockedSimpleHash = new Mock<ISimpleHash>(MockBehavior.Default);
-            var sut = new SimpleHashingAdapter(mockedSimpleHash.Object);
-            var hashedPassword = "hashed_password";
+            var expected = await this.sut.Hash("any_password");
+            Assert.Equal(expected, this.hashedPassword);
+        }
 
-            mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>())).Returns("hashed_password");
-
-            var expected = await sut.Hash("any_password");
-
-            Assert.Equal(expected, hashedPassword);
+        [Fact]
+        public async Task ShouldThrowWhenSimpleHashingAdapterThrows()
+        {
+            this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>())).Throws(new Exception());
+            await Assert.ThrowsAsync<Exception>(() => this.sut.Hash("any_password"));
         }
     }
 }
