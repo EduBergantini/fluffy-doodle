@@ -21,6 +21,7 @@ namespace Blog.UnitTests.Common
             this.sut = new SimpleHashingAdapter(mockedSimpleHash.Object);
             this.hashedPassword = "hashed_password";
             this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>(), It.IsAny<int>())).Returns(this.hashedPassword);
+            this.mockedSimpleHash.Setup(method => method.Verify(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
         }
 
         [Fact]
@@ -36,5 +37,13 @@ namespace Blog.UnitTests.Common
             this.mockedSimpleHash.Setup(method => method.Compute(It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
             await Assert.ThrowsAsync<Exception>(() => this.sut.CreateHash("any_password", 1));
         }
+
+        [Fact]
+        public async Task ShouldReturnTrueWhenVerifySucceeds()
+        {
+            var expected = await this.sut.CompareHash("any_password", "encrypted_password");
+            Assert.True(expected);
+        }
+
     }
 }
