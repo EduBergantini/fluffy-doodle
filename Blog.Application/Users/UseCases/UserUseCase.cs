@@ -25,7 +25,8 @@ namespace Blog.Application.Users.UseCases
         {
             var user = await this.getUserByEmailRepository.GetByEmail(email);
             if (user == null) throw new UserNotFoundException();
-            await this.encrypter.Encrypt(password);
+            var encryptedPassword = await this.encrypter.Encrypt(password);
+            if (encryptedPassword != user.Password) throw new InvalidPasswordException();
             return user;
         }
     }
