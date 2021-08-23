@@ -14,8 +14,4 @@
     <ProjectReference Include="..\Blog.Application\Blog.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SqlServer\Users\Configurations\" />
-  </ItemGroup>
-
 </Project>
