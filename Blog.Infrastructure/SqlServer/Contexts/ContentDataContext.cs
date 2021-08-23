@@ -2,6 +2,8 @@
 
 using Blog.Domain.Contents.Entities;
 using Blog.Infrastructure.SqlServer.Contents.Configurations;
+using Blog.Infrastructure.SqlServer.Roles.Configurations;
+using Blog.Domain.Roles.Entities;
 
 namespace Blog.Infrastructure.SqlServer.Contexts
 {
@@ -13,10 +15,13 @@ namespace Blog.Infrastructure.SqlServer.Contexts
         }
 
         public virtual DbSet<Content> Contents { get; set; }
+        public virtual DbSet<ApplicationRole> Roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new ContentConfiguration());
+            modelBuilder.ApplyConfiguration(new ApplicationRoleConfiguration());
+            
             base.OnModelCreating(modelBuilder);
         }
     }
