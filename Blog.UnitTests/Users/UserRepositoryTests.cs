@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using MockQueryable.Moq;
@@ -9,6 +10,7 @@ using Blog.Domain.Users.Entities;
 using Blog.Infrastructure.SqlServer.Users;
 using Blog.UnitTests.Common;
 using Blog.UnitTests.Users.Fakes;
+
 
 namespace Blog.UnitTests.Users
 {
@@ -37,6 +39,19 @@ namespace Blog.UnitTests.Users
 
             //Then
             Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public async Task ShouldThrowsWhenGetByEmailThrows()
+        {
+            //Given
+            var mock = this.users.AsQueryable().BuildMockDbSet();
+
+            //When
+            base.DataContextMock.SetupGet(property => property.Users).Throws(new Exception());
+
+            //Then
+            await Assert.ThrowsAsync<Exception>(() => sut.GetByEmail("any_mail"));
         }
     }
 }
