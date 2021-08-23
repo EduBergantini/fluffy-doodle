@@ -3,34 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-
 using Xunit;
-using Moq;
 using MockQueryable.Moq;
 
 using Blog.Domain.Contents.Entities;
-using Blog.Infrastructure.SqlServer.Contexts;
 using Blog.Infrastructure.SqlServer.Contents;
-using Microsoft.EntityFrameworkCore;
 using Blog.UnitTests.Contents.Fakes;
+using Blog.UnitTests.Common;
 
 namespace Blog.UnitTests.Contents
 {
-    public class ContentRepositoryTests
+    public class ContentRepositoryTests : CommonRepositoryTest
     {
-        private readonly Mock<ContentDataContext> dataContextMock;
         private readonly IEnumerable<Content> contents;
         private readonly ContentRepository sut;
 
         public ContentRepositoryTests()
+            : base()
         {
-            var inMemoryOptions = new DbContextOptionsBuilder<ContentDataContext>()
-                    .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                    .Options;
-            this.dataContextMock = new Mock<ContentDataContext>(MockBehavior.Default, new[] { inMemoryOptions });
-
             this.contents = ContentFake.GetContentList();
-            this.sut = new ContentRepository(this.dataContextMock.Object);
+            this.sut = new ContentRepository(base.DataContextMock.Object);
         }
 
         [Fact]
@@ -40,7 +32,7 @@ namespace Blog.UnitTests.Contents
             var mock = this.contents.AsQueryable().BuildMockDbSet();
 
             //When
-            this.dataContextMock.SetupGet(property => property.Contents).Returns(mock.Object);
+            base.DataContextMock.SetupGet(property => property.Contents).Returns(mock.Object);
             var expected = await sut.GetContentList();
 
             //Then
@@ -54,7 +46,7 @@ namespace Blog.UnitTests.Contents
             var exception = new Exception();
 
             //When
-            this.dataContextMock.SetupGet(property => property.Contents).Throws(exception);
+            base.DataContextMock.SetupGet(property => property.Contents).Throws(exception);
 
             //Then
             await Assert.ThrowsAsync<Exception>(() => sut.GetContentList());
@@ -68,7 +60,7 @@ namespace Blog.UnitTests.Contents
             var content = this.contents.Last();
 
             //When
-            this.dataContextMock.SetupGet(property => property.Contents).Returns(mock.Object);
+            base.DataContextMock.SetupGet(property => property.Contents).Returns(mock.Object);
             var expected = await sut.GetContent(x => x.PublicId == content.PublicId);
 
             //Then
