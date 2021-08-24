@@ -134,5 +134,12 @@ namespace Blog.UnitTests.Users
             Assert.Equal(this.contextUser.Id, userIdParameter);
             Assert.Equal(this.contextUser.RoleId, roleIdParameter);
         }
+
+        [Fact]
+        public async Task ShouldThrowWhenCreateTokenThrows()
+        {
+            this.mockedEncryption.Setup(method => method.CreateToken(It.IsAny<int>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+            await Assert.ThrowsAsync<Exception>(() => this.sut.Authenticate("any_mail", "any_password"));
+        }
     }
 }
