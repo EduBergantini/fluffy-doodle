@@ -11,14 +11,17 @@ namespace Blog.Application.Users.UseCases
     {
         private readonly IGetUserByEmailRepository getUserByEmailRepository;
         private readonly ICompareHash compareHash;
+        private readonly ICreateEncryption createEncryption;
 
         public UserUseCase(
             IGetUserByEmailRepository getUserByEmailRepository,
-            ICompareHash compareHash
+            ICompareHash compareHash,
+            ICreateEncryption createEncryption
         )
         {
             this.getUserByEmailRepository = getUserByEmailRepository;
             this.compareHash = compareHash;
+            this.createEncryption = createEncryption;
         }
 
         public async Task<User> Authenticate(string email, string password)
@@ -27,6 +30,7 @@ namespace Blog.Application.Users.UseCases
             if (user == null) throw new UserNotFoundException();
             var compareResult = await this.compareHash.CompareHash(password, user.Password);
             if (!compareResult) throw new InvalidPasswordException();
+            await this.createEncryption.CreateToken(user.Id, user.RoleId);
             return user;
         }
     }
