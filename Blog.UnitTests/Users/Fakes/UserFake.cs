@@ -6,6 +6,7 @@ using Bogus;
 using Blog.Domain.Users.Entities;
 using Blog.Domain.Roles.Entities;
 using Blog.Domain.Status.Entities;
+using Blog.Domain.Users.Models;
 
 namespace Blog.UnitTests.Users.Fakes
 {
@@ -35,6 +36,15 @@ namespace Blog.UnitTests.Users.Fakes
             };
         }
 
+        private AuthenticationTokenModel GetFakeAuthToken()
+        {
+            return new AuthenticationTokenModel
+            {
+                Token = this.faker.Internet.Random.AlphaNumeric(256),
+                ExpireInMs = this.faker.Random.Int(min: 0)
+            };
+        }
+
         internal static IEnumerable<User> GetUserList(int count = 3)
         {
             var users = new List<User>();
@@ -52,6 +62,12 @@ namespace Blog.UnitTests.Users.Fakes
             var user = fakeUser.GetFakeUser();
             user.Password = password;
             return user;
+        }
+
+        internal static AuthenticationTokenModel GetAuthToken()
+        {
+            var userFake = new UserFake();
+            return userFake.GetFakeAuthToken();
         }
     }
 }

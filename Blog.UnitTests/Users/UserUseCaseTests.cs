@@ -8,6 +8,7 @@ using Blog.Application.Users.UseCases;
 using Blog.Application.Users.Protocols;
 using Blog.Domain.Users.Errors;
 using Blog.Domain.Users.Entities;
+using Blog.Domain.Users.Models;
 using Blog.UnitTests.Users.Fakes;
 using Blog.Application.Common.Protocols;
 
@@ -16,20 +17,26 @@ namespace Blog.UnitTests.Users
     public class UserUseCaseTests
     {
         private readonly string fakeHashedPassword;
+        private readonly User contextUser;
         private readonly Mock<IGetUserByEmailRepository> mockedGetByEmailRepository;
         private readonly Mock<ICompareHash> mockedCompareHasher;
+        private readonly Mock<ICreateEncryption> mockedEncryption;
         private readonly UserUseCase sut;
 
         public UserUseCaseTests()
         {
             this.fakeHashedPassword = "encrypted_password";
+            this.contextUser = UserFake.GetUser(this.fakeHashedPassword);
             this.mockedGetByEmailRepository = new Mock<IGetUserByEmailRepository>(MockBehavior.Default);
-            this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ReturnsAsync(UserFake.GetUser(this.fakeHashedPassword));
+            this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ReturnsAsync(this.contextUser);
 
             this.mockedCompareHasher = new Mock<ICompareHash>(MockBehavior.Default);
             this.mockedCompareHasher.Setup(method => method.CompareHash(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
 
-            this.sut = new UserUseCase(this.mockedGetByEmailRepository.Object, this.mockedCompareHasher.Object);
+            this.mockedEncryption = new Mock<ICreateEncryption>(MockBehavior.Default);
+            this.mockedEncryption.Setup(method => method.CreateToken(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(UserFake.GetAuthToken());
+
+            this.sut = new UserUseCase(this.mockedGetByEmailRepository.Object, this.mockedCompareHasher.Object, this.mockedEncryption.Object);
         }
 
         [Fact]
@@ -107,6 +114,25 @@ namespace Blog.UnitTests.Users
         {
             this.mockedCompareHasher.Setup(method => method.CompareHash(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(false);
             await Assert.ThrowsAsync<InvalidPasswordException>(() => this.sut.Authenticate("any_email", "any_password"));
+        }
+
+        [Fact]
+        public async Task ShouldCallCreateTokenWithCorrectParameters()
+        {
+            int userIdParameter = -1;
+            int roleIdParameter = -1;
+
+            this.mockedEncryption.Setup(method => method.CreateToken(It.IsAny<int>(), It.IsAny<int>()))
+                .Callback<int, int>((userId, roleId) =>
+                {
+                    userIdParameter = userId;
+                    roleIdParameter = roleId;
+                });
+
+            var user = await this.sut.Authenticate("any_mail", "any_password");
+
+            Assert.Equal(this.contextUser.Id, userIdParameter);
+            Assert.Equal(this.contextUser.RoleId, roleIdParameter);
         }
     }
 }
