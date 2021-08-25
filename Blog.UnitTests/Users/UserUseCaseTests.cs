@@ -141,5 +141,13 @@ namespace Blog.UnitTests.Users
             this.mockedEncryption.Setup(method => method.CreateToken(It.IsAny<int>(), It.IsAny<int>())).ThrowsAsync(new Exception());
             await Assert.ThrowsAsync<Exception>(() => this.sut.Authenticate("any_mail", "any_password"));
         }
+
+        [Fact]
+        public async Task ShouldReturnAValidAccessTokenWhenAuthenticateSucceeds()
+        {
+            var actual = await this.sut.Authenticate("any_mail", "any_password");
+
+            Assert.Equal(this.contextUser, actual);
+        }
     }
 }
