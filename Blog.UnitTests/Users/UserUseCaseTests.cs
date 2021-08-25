@@ -20,6 +20,7 @@ namespace Blog.UnitTests.Users
         private readonly User contextUser;
         private readonly Mock<IGetUserByEmailRepository> mockedGetByEmailRepository;
         private readonly Mock<ICompareHash> mockedCompareHasher;
+        private readonly AuthenticationTokenModel authToken;
         private readonly Mock<ICreateEncryption> mockedEncryption;
         private readonly UserUseCase sut;
 
@@ -33,8 +34,9 @@ namespace Blog.UnitTests.Users
             this.mockedCompareHasher = new Mock<ICompareHash>(MockBehavior.Default);
             this.mockedCompareHasher.Setup(method => method.CompareHash(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
 
+            this.authToken = UserFake.GetAuthToken();
             this.mockedEncryption = new Mock<ICreateEncryption>(MockBehavior.Default);
-            this.mockedEncryption.Setup(method => method.CreateToken(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(UserFake.GetAuthToken());
+            this.mockedEncryption.Setup(method => method.CreateToken(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(this.authToken);
 
             this.sut = new UserUseCase(this.mockedGetByEmailRepository.Object, this.mockedCompareHasher.Object, this.mockedEncryption.Object);
         }
@@ -53,15 +55,6 @@ namespace Blog.UnitTests.Users
             var user = await this.sut.Authenticate(actual, "any_password");
 
             Assert.Equal(emailParameter, actual);
-        }
-
-        [Fact]
-        public async Task ShouldReturnUserWhenGetUserByEmailRepositoryReturnsUser()
-        {
-            var actual = UserFake.GetUser(this.fakeHashedPassword);
-            this.mockedGetByEmailRepository.Setup(method => method.GetByEmail(It.IsAny<string>())).ReturnsAsync(actual);
-            var expected = await this.sut.Authenticate("any_email", "any_password");
-            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -147,7 +140,7 @@ namespace Blog.UnitTests.Users
         {
             var actual = await this.sut.Authenticate("any_mail", "any_password");
 
-            Assert.Equal(this.contextUser, actual);
+            Assert.Equal(this.authToken, actual);
         }
     }
 }

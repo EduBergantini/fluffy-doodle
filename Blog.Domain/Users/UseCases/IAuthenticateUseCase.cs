@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-using Blog.Domain.Users.Entities;
+using Blog.Domain.Users.Models;
 
 namespace Blog.Domain.Users.UseCases
 {
     public interface IAuthenticateUseCase
     {
-        Task<User> Authenticate(string email, string password);
+        Task<AuthenticationTokenModel> Authenticate(string email, string password);
     }
 }

@@ -3,6 +3,7 @@ using Blog.Application.Common.Protocols;
 using Blog.Application.Users.Protocols;
 using Blog.Domain.Users.Entities;
 using Blog.Domain.Users.Errors;
+using Blog.Domain.Users.Models;
 using Blog.Domain.Users.UseCases;
 
 namespace Blog.Application.Users.UseCases
@@ -24,14 +25,14 @@ namespace Blog.Application.Users.UseCases
             this.createEncryption = createEncryption;
         }
 
-        public async Task<User> Authenticate(string email, string password)
+        public async Task<AuthenticationTokenModel> Authenticate(string email, string password)
         {
             var user = await this.getUserByEmailRepository.GetByEmail(email);
             if (user == null) throw new UserNotFoundException();
             var compareResult = await this.compareHash.CompareHash(password, user.Password);
             if (!compareResult) throw new InvalidPasswordException();
-            await this.createEncryption.CreateToken(user.Id, user.RoleId);
-            return user;
+            var accessToken = await this.createEncryption.CreateToken(user.Id, user.RoleId);
+            return accessToken;
         }
     }
 }
