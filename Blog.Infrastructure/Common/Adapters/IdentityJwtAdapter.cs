@@ -23,7 +23,6 @@ namespace Blog.Infrastructure.Common.Adapters
         public Task<AuthenticationTokenModel> CreateToken(int userId, int roleId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            //var key = Encoding.ASCII.GetBytes("[SECRET USED TO SIGN AND VERIFY JWT TOKENS, IT CAN BE ANY STRING]");
             var key = Encoding.UTF32.GetBytes(this.authenticationTokenConfiguration.SecretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
