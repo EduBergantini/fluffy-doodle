@@ -36,5 +36,15 @@ namespace Blog.IntegrationTests.Users
             Assert.Equal("any_token", authToken.Token);
             Assert.Equal(1000, authToken.ExpireInMs);
         }
+
+        [Fact]
+        public async Task POST_ShouldReturnBadRequestWhenSignReceiveInvalidModel()
+        {
+            var response = await base.httpClient.PostAsync(this.signInUrl, new StringContent("{}", Encoding.UTF8, "application/json"));
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.False(string.IsNullOrWhiteSpace(body));
+        }
     }
 }
