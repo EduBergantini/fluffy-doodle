@@ -25,6 +25,7 @@ namespace Blog.Server.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(AuthenticationModel authModel)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var authenticationToken = await this.authenticateUseCase.Authenticate(authModel.Email, authModel.PlainTextPassword);
             return Created("api/contents", authenticationToken);
         }
