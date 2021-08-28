@@ -36,6 +36,15 @@ namespace Blog.Server.Api.Controllers
                 ModelState.AddModelError("<ErrorID>", "Senha inválida ou o usuário não encontrado");
                 return BadRequest(ModelState);
             }
+            catch (InvalidPasswordException)
+            {
+                ModelState.AddModelError("<ErrorID>", "Senha inválida ou o usuário não encontrado");
+                return BadRequest(ModelState);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, exception);
+            }
         }
     }
 }
