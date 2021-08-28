@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Linq;
+using System;
 
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -86,6 +87,42 @@ namespace Blog.UnitTests.Users
             string[] errors = actual.Single().Value as string[];
             Assert.Single(actual);
             Assert.True(errors[0] == "Senha inválida ou o usuário não encontrado");
+        }
+
+        [Fact]
+        public async Task ShouldReturnBadRequestWhenAuthenticateThrowsInvalidPassword()
+        {
+            this.mockedAuthenticateUseCase
+                .Setup(m => m.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new InvalidPasswordException());
+
+            var response = await this.sut.Post(new AuthenticationModel { Email = "any_email", PlainTextPassword = "any_password" });
+
+            var responseResult = Assert.IsType<BadRequestObjectResult>(response);
+            Assert.Equal(400, responseResult.StatusCode);
+
+            var actual = Assert.IsAssignableFrom<SerializableError>(responseResult.Value);
+            string[] errors = actual.Single().Value as string[];
+            Assert.Single(actual);
+            Assert.True(errors[0] == "Senha inválida ou o usuário não encontrado");
+        }
+
+        [Fact]
+        public async Task ShouldReturnServerErrorWhenAuthenticateThrowsException()
+        {
+            var expected = new Exception("Stub Exception");
+
+            this.mockedAuthenticateUseCase
+                .Setup(m => m.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(expected);
+
+            var response = await this.sut.Post(new AuthenticationModel { Email = "any_email", PlainTextPassword = "any_password" });
+
+            var responseResult = Assert.IsType<ObjectResult>(response);
+            Assert.Equal(500, responseResult.StatusCode);
+
+            var model = Assert.IsAssignableFrom<Exception>(responseResult.Value);
+            Assert.Equal(expected, model);
         }
 
         [Fact]
