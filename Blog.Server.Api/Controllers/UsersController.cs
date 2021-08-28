@@ -31,18 +31,14 @@ namespace Blog.Server.Api.Controllers
                 var authenticationToken = await this.authenticateUseCase.Authenticate(authModel.Email, authModel.PlainTextPassword);
                 return Created("api/contents", authenticationToken);
             }
-            catch (UserNotFoundException)
-            {
-                ModelState.AddModelError("<ErrorID>", "Senha inválida ou o usuário não encontrado");
-                return BadRequest(ModelState);
-            }
-            catch (InvalidPasswordException)
-            {
-                ModelState.AddModelError("<ErrorID>", "Senha inválida ou o usuário não encontrado");
-                return BadRequest(ModelState);
-            }
             catch (Exception exception)
             {
+                if (exception is UserNotFoundException || exception is InvalidPasswordException)
+                {
+                    //TODO: Obter mensagens de erro a partir do serviço de mensagens
+                    ModelState.AddModelError("<ErrorID>", "Senha inválida ou o usuário não encontrado");
+                    return BadRequest(ModelState);
+                }
                 return StatusCode((int)HttpStatusCode.InternalServerError, exception);
             }
         }
