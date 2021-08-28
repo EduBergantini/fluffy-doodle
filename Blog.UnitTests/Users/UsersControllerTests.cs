@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -9,6 +10,7 @@ using Blog.Server.Api.Controllers;
 using Blog.UnitTests.Users.Fakes;
 using Blog.Server.Api.Models;
 using Blog.Domain.Users.Models;
+using Blog.Domain.Users.Errors;
 
 namespace Blog.UnitTests.Users
 {
@@ -66,6 +68,24 @@ namespace Blog.UnitTests.Users
             {
                 Assert.Equal(new string[] { errorMessage }, item.Value);
             }
+        }
+
+        [Fact]
+        public async Task ShouldReturnBadRequestWhenAuthenticateThrowsUserNotFound()
+        {
+            this.mockedAuthenticateUseCase
+                .Setup(m => m.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new UserNotFoundException());
+
+            var response = await this.sut.Post(new AuthenticationModel { Email = "any_email", PlainTextPassword = "any_password" });
+
+            var responseResult = Assert.IsType<BadRequestObjectResult>(response);
+            Assert.Equal(400, responseResult.StatusCode);
+
+            var actual = Assert.IsAssignableFrom<SerializableError>(responseResult.Value);
+            string[] errors = actual.Single().Value as string[];
+            Assert.Single(actual);
+            Assert.True(errors[0] == "Senha inválida ou o usuário não encontrado");
         }
 
         [Fact]
