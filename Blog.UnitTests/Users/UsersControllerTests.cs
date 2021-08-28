@@ -27,6 +27,26 @@ namespace Blog.UnitTests.Users
         }
 
         [Fact]
+        public async Task ShouldCallAuthenticateWithCorrectParameters()
+        {
+            string emailParameter = null, passwordParameter = null;
+            var authModel = new AuthenticationModel { Email = "any_email", PlainTextPassword = "any_password" };
+            this.mockedAuthenticateUseCase
+                .Setup(m => m.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<string, string>((email, password) =>
+                {
+                    emailParameter = email;
+                    passwordParameter = password;
+                })
+                .ReturnsAsync(this.fakeAuthToken);
+
+            var response = await this.sut.Post(authModel);
+
+            Assert.Equal(authModel.Email, emailParameter);
+            Assert.Equal(authModel.PlainTextPassword, passwordParameter);
+        }
+
+        [Fact]
         public async Task ShouldReturnAuthTokenWhenSignInSucceeds()
         {
             var authModel = new AuthenticationModel { Email = "any_email", PlainTextPassword = "any_password" };
