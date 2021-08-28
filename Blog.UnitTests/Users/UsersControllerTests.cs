@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.Mvc;
 using Blog.Domain.Users.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Blog.UnitTests.Users
 {
@@ -44,6 +45,26 @@ namespace Blog.UnitTests.Users
 
             Assert.Equal(authModel.Email, emailParameter);
             Assert.Equal(authModel.PlainTextPassword, passwordParameter);
+        }
+
+        [Fact]
+        public async Task ShouldReturnBadRequestWhenAuthenticateModelIsInvalid()
+        {
+            const string errorMessage = "Required";
+            this.sut.ModelState.AddModelError("Email", errorMessage);
+            this.sut.ModelState.AddModelError("PlainTextPassword", errorMessage);
+
+            var response = await this.sut.Post(null);
+
+            var responseResult = Assert.IsType<BadRequestObjectResult>(response);
+            Assert.Equal(400, responseResult.StatusCode);
+
+            var actual = Assert.IsAssignableFrom<SerializableError>(responseResult.Value);
+            Assert.Equal(2, actual.Count);
+            foreach (var item in actual)
+            {
+                Assert.Equal(new string[] { errorMessage }, item.Value);
+            }
         }
 
         [Fact]
