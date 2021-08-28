@@ -1,13 +1,14 @@
-﻿using Blog.Domain.Users.UseCases;
+﻿using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using Xunit;
+
+using Blog.Domain.Users.UseCases;
 using Blog.Server.Api.Controllers;
 using Blog.UnitTests.Users.Fakes;
 using Blog.Server.Api.Models;
-using Moq;
-using System.Threading.Tasks;
-using Xunit;
-using Microsoft.AspNetCore.Mvc;
 using Blog.Domain.Users.Models;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Blog.UnitTests.Users
 {
@@ -48,7 +49,7 @@ namespace Blog.UnitTests.Users
         }
 
         [Fact]
-        public async Task ShouldReturnBadRequestWhenAuthenticateModelIsInvalid()
+        public async Task ShouldReturnBadRequestWhenAuthenticationModelIsInvalid()
         {
             const string errorMessage = "Required";
             this.sut.ModelState.AddModelError("Email", errorMessage);
