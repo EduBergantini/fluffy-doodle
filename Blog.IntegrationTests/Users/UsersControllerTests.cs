@@ -16,7 +16,7 @@ using Blog.Domain.Users.UseCases;
 using Blog.IntegrationTests.Users.Stubs;
 using Blog.Domain.Users.Errors;
 using System.Collections.Generic;
-
+using System;
 
 namespace Blog.IntegrationTests.Users
 {
@@ -91,6 +91,26 @@ namespace Blog.IntegrationTests.Users
             Assert.Equal("Senha inválida ou o usuário não encontrado", error.First().Value[0]);
         }
 
+        [Fact]
+        public async Task POST_ShouldReturnServerErrorWhenSignInThrowsGeneralException()
+        {
+            var client = base.factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddScoped<IAuthenticateUseCase, AuthenticateUseCaseWithExceptionStub>((service) =>
+                    {
+                        return new AuthenticateUseCaseWithExceptionStub(new Exception());
+                    });
+                });
+            }).CreateClient();
+
+            var response = await client.PostAsync(this.signInUrl, this.validHttpContent);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.False(string.IsNullOrWhiteSpace(body));
+        }
 
         [Fact]
         public async Task POST_ShouldReturnAuthenticationTokenWhenSignInSucceeds()
