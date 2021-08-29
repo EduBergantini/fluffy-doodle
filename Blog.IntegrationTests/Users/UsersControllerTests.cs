@@ -42,7 +42,7 @@ namespace Blog.IntegrationTests.Users
         }
 
         [Fact]
-        public async Task POST_ShouldReturnServerErrorWhenSignInThrowsError()
+        public async Task POST_ShouldReturnBadRequestWhenSignInDoNotFindUser()
         {
             var client = base.factory.WithWebHostBuilder(builder =>
             {
@@ -65,6 +65,32 @@ namespace Blog.IntegrationTests.Users
             Assert.Single(error.First().Value);
             Assert.Equal("Senha inválida ou o usuário não encontrado", error.First().Value[0]);
         }
+
+        [Fact]
+        public async Task POST_ShouldReturnBadRequestWhenSignInReceiveInvalidPassword()
+        {
+            var client = base.factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddScoped<IAuthenticateUseCase, AuthenticateUseCaseWithExceptionStub>((service) =>
+                    {
+                        return new AuthenticateUseCaseWithExceptionStub(new InvalidPasswordException());
+                    });
+                });
+            }).CreateClient();
+
+            var response = await client.PostAsync(this.signInUrl, this.validHttpContent);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.False(string.IsNullOrWhiteSpace(body));
+
+            var error = JsonSerializer.Deserialize<IDictionary<string, string[]>>(body);
+            Assert.Single(error.First().Value);
+            Assert.Equal("Senha inválida ou o usuário não encontrado", error.First().Value[0]);
+        }
+
 
         [Fact]
         public async Task POST_ShouldReturnAuthenticationTokenWhenSignInSucceeds()
