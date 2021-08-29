@@ -18,7 +18,7 @@ namespace Blog.Infrastructure.SqlServer.Users
         }
         public Task<User> GetByEmail(string email)
         {
-            var user = this.dataContext.Users.SingleAsync(user => user.Email == email);
+            var user = this.dataContext.Users.SingleOrDefaultAsync(user => user.Email == email);
             return user;
         }
     }
